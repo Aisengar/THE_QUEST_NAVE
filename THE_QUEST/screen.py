@@ -11,8 +11,7 @@ for i in range(enemys):
 
 
 while start:
-    clock.tick(60)
-    #screen.fill((0, 0, 0))
+    clock.tick(FPS)
     event_list = pg.event.get()
     for event in event_list:
         if event.type==pg.QUIT:
@@ -21,11 +20,18 @@ while start:
     for j in range(enemys):
         pg.draw.rect(screen, enemy_list[j].color, (enemy_list[j].x, enemy_list[j].y, enemy_list[j].w, enemy_list[j].h))
         enemy_list[j].movimiento(800,600)
-
+  
     pg.draw.rect(screen, player.color, (player.x,player.y, player.w,player.h))
-    player.movimiento(800, 600)
+    player.movimiento(WIDTH, HEIGHT)
 
     pg.display.flip()
-    screen.blit(background,(0,0))
 
-pg.quit()
+    #Background en movimiento
+    for i in range(2):
+       screen.blit(background,(i*WIDTH+scroll,0))#Coloca la imagen del background
+    scroll-=3
+    if (scroll*-1)>=WIDTH:
+        print(scroll)
+        scroll = 0
+    
+pg.quit() 

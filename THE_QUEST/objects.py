@@ -39,13 +39,14 @@ class Enemigo:
         self.w = w
         self.h = h
         self.color = color
-        self.x = random.randint(-10, 0)
+        self.x = random.randint(810, 830)
         self.y = random.randint(0, 600)
-        self.vx = random.randint(0 ,5)
-        self.vy = random.randint(1,5)
+        self.vx = random.randint(-7,-4)
+        self.vy = random.randint(-3,3)
     def movimiento(self, xmax, ymax):
         self.x += self.vx
         self.y += self.vy
         if self.x > xmax+self.h or self.y+self.w < 0 or self.y> ymax+ self.w:
-            self.x = random.randint(-10,-5)
-            self.y = random.randint(0, 600)
+            self.x = random.randint(810,820)
+            self.y = random.randint(100, 300)
+
