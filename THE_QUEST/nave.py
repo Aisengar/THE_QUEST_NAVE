@@ -10,6 +10,7 @@ class Nave(pg.sprite.Sprite):
         self.nav= pg.image.load("THE_QUEST/Imagens/Sprites nave1.png").convert()
         self.image=pg.transform.scale(self.nav, (80, 90))
         self.image.set_colorkey(BLACK)
+        
         self.rect=self.image.get_rect()
         #self.rect.topleft = [self.x,self.y] 
         self.rect.centerx = WIDTH-10
@@ -43,6 +44,6 @@ class Nave(pg.sprite.Sprite):
 
         self.rect.centerx += self.vx
         self.rect.centery += self.vy
-        
-        
-
+    def UPD(self):
+        self.nav= pg.image.load(self.animation).convert()
+        self.image=pg.transform.scale(self.nav, (80, 90))

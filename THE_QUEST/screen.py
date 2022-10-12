@@ -31,6 +31,7 @@ while start:
     #player.movimiento(WIDTH, HEIGHT)
     nave_sprites.draw(screen)
     nave.movimiento()
+    nave.update()
     pg.display.flip()
     
     
