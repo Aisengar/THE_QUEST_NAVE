@@ -25,25 +25,45 @@ class Nave(pg.sprite.Sprite):
         keystate = pg.key.get_pressed()
         if keystate[pg.K_LEFT]:
             self.animation="THE_QUEST/Imagens/Sprites nave 5.png"
-            print(self.animation)
             self.vx = -5
         elif keystate[pg.K_RIGHT]:
             self.animation="THE_QUEST/Imagens/Sprites nave 4.png"
             self.vx = 5
-            print(self.animation)
         elif keystate[pg.K_DOWN]:
             self.animation="THE_QUEST/Imagens/Sprites nave 2.png"
             self.vy = 5
-            print(self.animation)
         elif keystate[pg.K_UP]:
             self.animation="THE_QUEST/Imagens/Sprites nave 3.png"
             self.vy = -5
-            print(self.animation)
         else:
             self.animation="THE_QUEST/Imagens/Sprites nave1.png" 
 
+        #Cambio de posision 
         self.rect.centerx += self.vx
         self.rect.centery += self.vy
+        #limite de tablero
+        if self.rect.bottom > HEIGHT:
+            self.rect.bottom = HEIGHT
+        if self.rect.top < 0:
+            self.rect.top = 0
+        if self.rect.left < 0:
+            self.rect.left =0
+        if self.rect.right > WIDTH:
+            self.rect.right = WIDTH
+
     def UPD(self):
         self.nav= pg.image.load(self.animation).convert()
         self.image=pg.transform.scale(self.nav, (80, 90))
+        self.image.set_colorkey(BLACK)
+
+
+def aleatorio_meteor():
+    n_meteo= randint(5,50)
+    meteo= pg.image.load("THE_QUEST/Imagens/Sprites nave1.png").convert()
+    meteo.set_colorkey(BLACK)
+    lista = pg.sprite.Group()
+    lista.add(meteo)
+    return lista
+
+    
+    

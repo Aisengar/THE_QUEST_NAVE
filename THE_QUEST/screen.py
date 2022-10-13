@@ -8,7 +8,7 @@ from nave import Nave
 
 enemy_list= []
 #Crear enemigos 
-for i in range(enemys):
+for i in range(enemigos):
     enemy = Enemigo()
     enemy_list.append(enemy)
 nave=Nave()
@@ -22,16 +22,14 @@ while start:
         if event.type==pg.QUIT:
             start = False
     
-    for j in range(enemys):
+    for j in range(enemigos):
         pg.draw.rect(screen, enemy_list[j].color, (enemy_list[j].x, enemy_list[j].y, enemy_list[j].w, enemy_list[j].h))
         enemy_list[j].movimiento(800,600)
   #PLAYER SCREEN DROWING
 
-    #pg.draw.rect(screen, player.color, (player.x,player.y, player.w,player.h))
-    #player.movimiento(WIDTH, HEIGHT)
     nave_sprites.draw(screen)
     nave.movimiento()
-    nave.update()
+    nave.UPD()
     pg.display.flip()
     
     

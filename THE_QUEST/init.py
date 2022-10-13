@@ -1,20 +1,23 @@
 import pygame as pg
 import sys
 from objects import Jugador,Enemigo
-
+from random import randint
 
 #pygame init settings
 pg.init()
 pg.mixer.init()
 clock= pg.time.Clock()
 
-#colors
+#colors y otros
+contador =0
 BLACK=(0, 0, 0)
 WHITE= (255,255,255)
 
 #objects
-enemys = 10
-
+def n_enemigos():
+    numero=randint(5,20)
+    return int(numero)
+enemigos = 10
 player=Jugador()
 enemy=Enemigo()
 
@@ -35,4 +38,4 @@ background = pg.transform.scale(Fondo1, (WIDTH, HEIGHT))#esta parte me permite r
 
 player_sprite= pg.sprite.Group()
 player_sprite.add(player)
-print(player_sprite)
+
