@@ -3,10 +3,8 @@ import random
 from init import *
 
 class Nave(pg.sprite.Sprite):
-    def __init__(self,x=300,y=10):
+    def __init__(self):
         super().__init__()
-        self.x=x
-        self.y=y
         self.nav= pg.image.load("THE_QUEST/Imagens/Sprites nave1.png").convert()
         self.image=pg.transform.scale(self.nav, (80, 90))
         self.image.set_colorkey(BLACK)
@@ -25,18 +23,19 @@ class Nave(pg.sprite.Sprite):
         keystate = pg.key.get_pressed()
         if keystate[pg.K_LEFT]:
             self.animation="THE_QUEST/Imagens/Sprites nave 5.png"
-            self.vx = -5
+            self.vx -= 5
         elif keystate[pg.K_RIGHT]:
             self.animation="THE_QUEST/Imagens/Sprites nave 4.png"
             self.vx = 5
         elif keystate[pg.K_DOWN]:
             self.animation="THE_QUEST/Imagens/Sprites nave 2.png"
-            self.vy = 5
+            self.vy += 5
         elif keystate[pg.K_UP]:
             self.animation="THE_QUEST/Imagens/Sprites nave 3.png"
-            self.vy = -5
+            self.vy -= 5
         else:
-            self.animation="THE_QUEST/Imagens/Sprites nave1.png" 
+            self.animation="THE_QUEST/Imagens/Sprites nave1.png"
+            self.vx -= 5
 
         #Cambio de posision 
         self.rect.centerx += self.vx
@@ -57,13 +56,6 @@ class Nave(pg.sprite.Sprite):
         self.image.set_colorkey(BLACK)
 
 
-def aleatorio_meteor():
-    n_meteo= randint(5,50)
-    meteo= pg.image.load("THE_QUEST/Imagens/Sprites nave1.png").convert()
-    meteo.set_colorkey(BLACK)
-    lista = pg.sprite.Group()
-    lista.add(meteo)
-    return lista
 
-    
+
     

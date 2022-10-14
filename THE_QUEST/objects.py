@@ -69,8 +69,8 @@ class Enemigo:
         self.vy = random.randint(-3,3)
     def movimiento(self, xmax, ymax):
         self.x += self.vx
-        self.y += self.vy
-        if self.x > xmax+self.h or self.y+self.w < 0 or self.y> ymax+ self.w:
+        #self.y += self.vy
+        if self.x > xmax+self.h or self.x < 0 or self.y+self.w < 0 or self.y> ymax+ self.w:
             self.x = random.randint(810,820)
-            self.y = random.randint(100, 300)
+            self.y = random.randint(0, 600)
 

@@ -31,9 +31,6 @@ while start:
     nave.movimiento()
     nave.UPD()
     pg.display.flip()
-    
-    
-    
     #Background en movimiento
     for i in range(2):
        screen.blit(background,(i*WIDTH+scroll,0))#Coloca la imagen del background
