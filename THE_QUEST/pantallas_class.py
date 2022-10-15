@@ -81,4 +81,5 @@ class partidas():
 
 juego = partidas(screen)
 juego.menu_pp()
+print("Hola")
 #juego.pantalla_juego()
