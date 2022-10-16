@@ -1,6 +1,5 @@
 import pygame as pg
 import sys
-from objects import Jugador,Enemigo
 from random import randint
 
 #pygame init settings
@@ -14,12 +13,9 @@ BLACK=(0, 0, 0)
 WHITE= (255,255,255)
 
 #objects
-def n_enemigos():
-    numero=randint(5,20)
-    return int(numero)
-enemigos = 10
-player=Jugador()
-enemy=Enemigo()
+
+enemigos = 20
+
 
 #Booleans
 start = True
@@ -36,6 +32,5 @@ FPS=60
 Fondo1 = pg.image.load("THE_QUEST/Imagens/fondo1.png").convert()
 background = pg.transform.scale(Fondo1, (WIDTH, HEIGHT))#esta parte me permite redimensionar el tamaño del bakground
 
-player_sprite= pg.sprite.Group()
-player_sprite.add(player)
+
 

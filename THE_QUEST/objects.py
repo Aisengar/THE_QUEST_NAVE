@@ -2,20 +2,20 @@ import pygame as pg
 import random
 from init import *
 
-class Jugador(pg.sprite.Sprite):
-    
-    def __init__(self, x= 10, y=300, w = 40, h=40, color = (255, 0, 255)):
+class Nave(pg.sprite.Sprite):
+    def __init__(self):
         super().__init__()
-        self.x = x
-        self.y = y
-        self.image= pg.image.load("THE_QUEST/Imagens/Sprites nave1.png")
+        self.nav= pg.image.load("THE_QUEST/Imagens/Sprites nave1.png").convert()
+        self.image=pg.transform.scale(self.nav, (80, 90))
+        self.image.set_colorkey(BLACK)
+        
         self.rect=self.image.get_rect()
-        self.rect.topleft = [self.x,self.y]
-        self.w = w
-        self.h = h
-        self.color = color 
+         
+        self.rect.centerx = WIDTH-10
+        self.rect.centery = HEIGHT//2
         self.animation = ""
-    def movimiento(self, xmax, ymax):
+        
+    def movimiento(self, xmax=800, ymax=600):
         #moviimiento por teclas
         self.vx = 0
         self.vy = 0
@@ -23,54 +23,70 @@ class Jugador(pg.sprite.Sprite):
         keystate = pg.key.get_pressed()
         if keystate[pg.K_LEFT]:
             self.animation="THE_QUEST/Imagens/Sprites nave 5.png"
-            self.vx = -5
+            self.vx=-4
+            self.vx -= 5
         elif keystate[pg.K_RIGHT]:
             self.animation="THE_QUEST/Imagens/Sprites nave 4.png"
             self.vx = 5
         elif keystate[pg.K_DOWN]:
             self.animation="THE_QUEST/Imagens/Sprites nave 2.png"
-            self.vy = 5
+            self.vy += 5
         elif keystate[pg.K_UP]:
             self.animation="THE_QUEST/Imagens/Sprites nave 3.png"
-            self.vy = -5
+            self.vy -= 5
         else:
-            self.animation="THE_QUEST/Imagens/Sprites nave1.png" 
+            self.animation="THE_QUEST/Imagens/Sprites nave1.png"
+            self.vx -= 5
 
-        #delimitar el tagblero
-        if self.x <= 0 or self.x >= xmax - self.w:
-            self.vx *= -1
-        if self.y <= 0 or self.y >= ymax - self.h:
-            self.vy *= -1
-        #movimiento
-        self.x += self.vx
-        self.y += self.vy
-    def Drw(self):
-        #Imagen
-        self.image= pg.image.load(self.animation)
+        #Cambio de posision 
+        self.rect.centerx += self.vx
+        self.rect.centery += self.vy
+        #limite de tablero
+        if self.rect.bottom > HEIGHT:
+            self.rect.bottom = HEIGHT
+        if self.rect.top < 0:
+            self.rect.top = 0
+        if self.rect.left < 0:
+            self.rect.left =0
+        if self.rect.right > WIDTH:
+            self.rect.right = WIDTH
+
+    def UPD(self):
+        self.nav= pg.image.load(self.animation).convert()
+        self.image=pg.transform.scale(self.nav, (80, 90))
+        self.image.set_colorkey(BLACK)
+
+def meteor_animation():
+    animation_list = []
+    sheet=pg.image.load("THE_QUEST/Imagens/Asteroides Sprite.png").convert_alpha()
+    for row in range(0,8):
+        for colum in range(0,8):
+            animation= pg.Rect(38*colum,38*row,38,38)
+            animation_list.append(sheet.subsurface(animation))
+    return animation_list
+
+animation_list= meteor_animation()
+
+class Meteo(pg.sprite.Sprite):
+    def __init__(self):
+        pg.sprite.Sprite.__init__(self)
+        self.list_animation = animation_list
+        self.image= self.list_animation[0]
+        self.image.set_colorkey(BLACK)
         self.rect=self.image.get_rect()
-        self.rect.topleft = [self.x,self.y]
+        self.rect.topleft=[random.randint(830, 870),random.randint(0, 600)]
+
+        self.index=0
+        self.vx=random.randint(5,9)
+    def update(self):
         
-    def Update(self):
-        self.image= pg.image.load(self.animation)
-
-
-        
-
-
-
-class Enemigo:
-    def __init__(self, w = 40, h=40, color = (255, 0, 255)):
-        self.w = w
-        self.h = h
-        self.color = color
-        self.x = random.randint(810, 830)
-        self.y = random.randint(0, 600)
-        self.vx = random.randint(-7,-4)
-        self.vy = random.randint(-3,3)
-    def movimiento(self, xmax, ymax):
-        self.x += self.vx
-        #self.y += self.vy
-        if self.x > xmax+self.h or self.x < 0 or self.y+self.w < 0 or self.y> ymax+ self.w:
-            self.x = random.randint(810,820)
-            self.y = random.randint(0, 600)
+        self.image=self.list_animation[int(self.index)]
+        self.image.set_colorkey(BLACK)
+        self.index +=0.25
+        self.rect.centerx -= self.vx
+        if self.index >= len(self.list_animation):
+            self.index=0
+        if self.rect.right < 0:
+            self.rect.centerx= random.randint(840, 1200)
+            self.rect.centery=random.randint(0, 600)
 
