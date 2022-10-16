@@ -1,6 +1,6 @@
 import random
 import pygame as pg
-from init import *
+from THE_QUEST.init import *
 
 def meteor_animation():
     animation_list = []

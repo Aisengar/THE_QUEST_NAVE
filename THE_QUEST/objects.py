@@ -1,3 +1,4 @@
+
 import pygame as pg
 import random
 from init import *
@@ -51,11 +52,32 @@ class Nave(pg.sprite.Sprite):
         if self.rect.right > WIDTH:
             self.rect.right = WIDTH
 
-    def UPD(self):
+    def update(self):
         self.nav= pg.image.load(self.animation).convert()
         self.image=pg.transform.scale(self.nav, (80, 90))
         self.image.set_colorkey(BLACK)
 
+    
+        
+class Bullet(pg.sprite.Sprite):
+    def __init__(self,x,y) -> None:
+        super().__init__()
+        self.image = pg.image.load("THE_QUEST/Imagens/Disparo.gif")
+        self.image.set_colorkey(BLACK)
+        self.rect=self.image.get_rect()
+        self.rect.centery=y
+        self.rect.centerx=x
+        self.vx=10
+    def update(self):
+        self.rect.centerx+=self.vx
+        if self.rect.bottom > WIDTH:
+            self.kill()
+        
+
+
+
+
+#esta funcion me permite animar el meteoro
 def meteor_animation():
     animation_list = []
     sheet=pg.image.load("THE_QUEST/Imagens/Asteroides Sprite.png").convert_alpha()

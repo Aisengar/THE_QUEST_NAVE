@@ -1,4 +1,4 @@
-from email.headerregistry import Group
+
 import pygame as pg
 from init import *
 from objects import *
@@ -8,6 +8,7 @@ class partidas():
     def __init__(self ):
         self.pantalla = pg.display.set_mode((WIDTH,HEIGHT))
         self.asteroids=pg.sprite.Group()
+        self.bullet_list=pg.sprite.Group()
         #self.start= True
          
         #fondo para Menu
@@ -37,7 +38,8 @@ class partidas():
         nave=Nave()
         self.nave_sprites=pg.sprite.Group()
         self.nave_sprites.add(nave)
-        
+        #Disparo
+        bullet=Bullet(100,200)
         #enemigo
         for i in range(enemigos):
             asteroid= Meteo()
@@ -52,20 +54,27 @@ class partidas():
             for event in self.event_list:
                 if event.type==pg.QUIT:
                     start = False
-            
-            self.asteroids.draw(self.pantalla)
+                elif event.type==pg.KEYDOWN:
+                    #evento de disparo
+                    if event.key == pg.K_SPACE:
+                        bullet=Bullet(nave.rect.centerx,nave.rect.centery)
+                        self.bullet_list.add(bullet)
             self.asteroids.update()
+            self.bullet_list.update()
+            self.bullet_list.draw(self.pantalla)
+            self.asteroids.draw(self.pantalla)
+            
             #PLAYER SCREEN DROWING
             self.nave_sprites.draw(self.pantalla)
             nave.movimiento()
-            nave.UPD()
+            nave.update()
             pg.display.flip()
             #Background en movimiento
             
             for i in range(2):
                 self.pantalla.blit(self.background,(i*WIDTH+self.scroll,0))#Coloca la imagen del background
                 self.scroll-=2
-                print(self.scroll)
+                
             if (self.scroll*-1)>=WIDTH:
                 self.scroll = 0
         pg.quit() 
@@ -110,6 +119,7 @@ class partidas():
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_RETURN:
                         start = False
+                    
             self.pantalla.blit(self.background_go,(0,0))#Coloca la imagen del background
             self.pantalla.blit(texto,(200,420))
 
