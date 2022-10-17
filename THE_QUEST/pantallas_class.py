@@ -42,7 +42,7 @@ class partidas():
         self.font_titles= pg.font.Font("THE_QUEST/Fonts/Silkscreen-Bold.ttf",30)
         self.font_texto = pg.font.Font("THE_QUEST/Fonts/Silkscreen-Regular.ttf",20)
         self.font_titles2= pg.font.Font("THE_QUEST/Fonts/Silkscreen-Bold.ttf",50)
-        
+         #                ---------------------------- Pantalla Del Juego -----------------------------
     def pantalla_juego(self):
         
         #Grupo nave
@@ -76,10 +76,16 @@ class partidas():
             hits=pg.sprite.groupcollide(self.bullet_list, self.asteroids,True,True)
             for hit in hits:
                 self.score += 10
+                explotar=Explosion(hit.rect.center)
                 asteroid=Meteo()
-                self.asteroids.add(asteroid)
-                
-
+                self.asteroids.add(asteroid,explotar)
+                #Quitar los # para activar las colisiones 
+            hits=pg.sprite.groupcollide(self.nave_sprites, self.asteroids,False,True)
+            #if hits:
+            #    nave=Nave()
+            #    explotar=Explosion()
+            #    self.nave_sprites.add(nave,explotar)
+             #   start=False
             #Dibujo de listas de objetos
             self.bullet_list.draw(self.pantalla)
             self.asteroids.draw(self.pantalla)
@@ -100,17 +106,17 @@ class partidas():
                 self.scroll = 0
                         #Marcadores
             dibujar_texto(self.pantalla,str(self.score),25,WIDTH//2,10)
-            dibujar_texto(self.pantalla,str(int(self.seconds)),25,10,10)
+            dibujar_texto(self.pantalla,str(int(self.seconds)),25,20,10)
             if self.seconds==0:
                 pass
-            elif self.seconds%5==0:
+            elif self.seconds%20==0:
                 print(self.seconds%5)
-                self.score+=100
+                self.score+=1
 
 
             
         pg.quit() 
-
+                     #                ---------------------------- Pantalla Del menu -----------------------------
     def menu_pp(self):
         texto1=self.font_texto.render("Tecla Arriba: para asennder",True,WHITE)
         texto2=self.font_texto.render("Tecla Abajo: para desender",True,WHITE)
@@ -140,7 +146,7 @@ class partidas():
             self.pantalla.blit(texto4,(10,420))
             self.pantalla.blit(texto5,(10,460))
         pg.quit() 
-
+                     #                ---------------------------- Pantalla Game Over -----------------------------
     def game_ov(self):
         texto=self.font_titles2.render("Pulsa Enter",True,WHITE)
         start=True

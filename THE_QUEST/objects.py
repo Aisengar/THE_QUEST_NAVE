@@ -2,18 +2,18 @@
 import pygame as pg
 import random
 from init import *
-
+ #                ---------------------------- Clase Nave -----------------------------
 class Nave(pg.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.nav= pg.image.load("THE_QUEST/Imagens/Sprites nave1.png").convert()
-        self.image=pg.transform.scale(self.nav, (80, 90))
+        self.image=pg.transform.scale(self.nav, (60, 70))
         self.image.set_colorkey(BLACK)
         
         self.rect=self.image.get_rect()
          
-        self.rect.centerx = WIDTH-10
-        self.rect.centery = HEIGHT//2
+        self.rect.centerx = -10
+        self.rect.centery = 300
         self.animation = ""
         
     def movimiento(self, xmax=800, ymax=600):
@@ -57,7 +57,7 @@ class Nave(pg.sprite.Sprite):
         self.image=pg.transform.scale(self.nav, (80, 90))
         self.image.set_colorkey(BLACK)
 
-    
+     #                ---------------------------- Clase Disparo -----------------------------
         
 class Bullet(pg.sprite.Sprite):
     def __init__(self,x,y) -> None:
@@ -72,11 +72,41 @@ class Bullet(pg.sprite.Sprite):
         self.rect.centerx+=self.vx
         if self.rect.bottom > WIDTH:
             self.kill()
-        
+ #                ---------------------------- Clase Explosion -----------------------------
+            #Genero las listas de las explosiones
+explosion_list=[]
+for i in range(1,24):
+    file="THE_QUEST/Imagens/Explotion/Explosion{}.png".format(i)
+    img=pg.image.load(file).convert_alpha()
+    img.set_colorkey(BLACK)
+    img_scale=pg.transform.scale(img,(50,50))
+    explosion_list.append(img_scale)
 
 
-
-
+class Explosion(pg.sprite.Sprite):
+    def __init__(self, center):
+        super().__init__()
+        self.image= explosion_list[0]
+        self.rect=self.image.get_rect()
+        self.rect.center=center
+        self.frame=0
+        self.last_update = pg.time.get_ticks()
+        self.frame_rate= 20
+    def update(self):
+        self.vx=-3
+        now = pg.time.get_ticks()
+        if now-self.last_update > self.frame_rate:
+            self.last_update=now
+            self.frame+=1
+            if self.frame==len(explosion_list):
+                self.kill()
+            else:
+                center=self.rect.center
+                self.image=explosion_list[self.frame]
+                self.rect = self.image.get_rect()
+                self.rect.center = center
+        self.rect.centerx+=self.vx
+ #                ---------------------------- Clase meteoros -----------------------------
 #esta funcion me permite animar el meteoro
 def meteor_animation():
     animation_list = []
