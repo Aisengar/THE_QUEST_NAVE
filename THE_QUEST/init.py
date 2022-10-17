@@ -14,7 +14,7 @@ WHITE= (255,255,255)
 
 #objects
 
-enemigos = 20
+enemigos = 5
 
 
 #Booleans

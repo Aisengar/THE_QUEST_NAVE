@@ -91,7 +91,7 @@ class Explosion(pg.sprite.Sprite):
         self.rect.center=center
         self.frame=0
         self.last_update = pg.time.get_ticks()
-        self.frame_rate= 20
+        self.frame_rate= 10
     def update(self):
         self.vx=-3
         now = pg.time.get_ticks()

@@ -56,10 +56,10 @@ while True:
     # stores the (x,y) coordinates into 
     # the variable as a tuple 
     mouse = pygame.mouse.get_pos() 
-      
+    print(mouse)
     # if mouse is hovered on a button it 
     # changes to lighter shade 
-    if width/2 <= mouse[0] <= width/2+140 and height/2 <= mouse[1] <= height/2+40: 
+    if 393 <= mouse[0] <= 496 and 362 <= mouse[1] <= 400: 
         pygame.draw.rect(screen,color_light,[width/2,height/2,140,40]) 
           
     else: 

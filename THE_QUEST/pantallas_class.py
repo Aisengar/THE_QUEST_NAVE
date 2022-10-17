@@ -20,6 +20,9 @@ class partidas():
         
         #Puntaje y Tiempo
         self.score=0
+        #vidas e inmunidad
+        self.vidas=3
+        self.inmunidad=120
          
         #fondo para Menu
         self.FondoM = pg.image.load("THE_QUEST/Imagens/Imagen para menu.jpeg").convert()
@@ -81,10 +84,22 @@ class partidas():
                 self.asteroids.add(asteroid,explotar)
                 #Quitar los # para activar las colisiones 
             hits=pg.sprite.groupcollide(self.nave_sprites, self.asteroids,False,True)
-            #if hits:
-            #    nave=Nave()
-            #    explotar=Explosion()
-            #    self.nave_sprites.add(nave,explotar)
+            for hit in hits:
+                explotar=Explosion(hit.rect.center)
+                asteroid=Meteo()
+                self.nave_sprites.add(explotar)
+                self.asteroids.add(asteroid)
+            if hits and self.inmunidad>=120:
+                self.vidas-=1
+                self.inmunidad=0
+                if self.vidas<=0:
+                    start=False
+            #elif self.inmunidad>120:
+             #   self.inmunidad=120
+            elif self.inmunidad<120:
+                self.inmunidad+=1
+            print(self.inmunidad)
+
              #   start=False
             #Dibujo de listas de objetos
             self.bullet_list.draw(self.pantalla)
@@ -107,6 +122,7 @@ class partidas():
                         #Marcadores
             dibujar_texto(self.pantalla,str(self.score),25,WIDTH//2,10)
             dibujar_texto(self.pantalla,str(int(self.seconds)),25,20,10)
+            dibujar_texto(self.pantalla,str(self.vidas),25,750,10)
             if self.seconds==0:
                 pass
             elif self.seconds%20==0:
@@ -115,7 +131,7 @@ class partidas():
 
 
             
-        pg.quit() 
+        #pg.quit() 
                      #                ---------------------------- Pantalla Del menu -----------------------------
     def menu_pp(self):
         texto1=self.font_texto.render("Tecla Arriba: para asennder",True,WHITE)
@@ -145,7 +161,7 @@ class partidas():
             self.pantalla.blit(texto3,(10,380))
             self.pantalla.blit(texto4,(10,420))
             self.pantalla.blit(texto5,(10,460))
-        pg.quit() 
+        #pg.quit() 
                      #                ---------------------------- Pantalla Game Over -----------------------------
     def game_ov(self):
         texto=self.font_titles2.render("Pulsa Enter",True,WHITE)
@@ -164,11 +180,23 @@ class partidas():
             self.pantalla.blit(texto,(200,420))
 
 
-            print(self.seconds)
+            
             pg.display.flip()
             
             
-        pg.quit() 
-
-game = partidas()
-game.pantalla_juego()
+        #pg.quit() 
+salir=False
+while not salir:
+    event_list = pg.event.get()
+    for event in event_list:
+        if event.type==pg.QUIT:
+            start = False
+        if event.type == pg.KEYDOWN:
+            if event.key == pg.K_ESCAPE:
+                salir = True
+    game = partidas()
+    game.menu_pp()
+    game = partidas()
+    game.pantalla_juego()
+    game = partidas()
+    game.game_ov()
