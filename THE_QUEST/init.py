@@ -32,5 +32,9 @@ FPS=60
 Fondo1 = pg.image.load("THE_QUEST/Imagens/fondo1.png").convert()
 background = pg.transform.scale(Fondo1, (WIDTH, HEIGHT))#esta parte me permite redimensionar el tamaño del bakground
 
-
+#Sonidos
+exposion_sound= pg.mixer.Sound("THE_QUEST/music/Explosion/explosion.wav")
+shoot_sound= pg.mixer.Sound("THE_QUEST/music/Disparo/laserpew.ogg")
+menu_sound= pg.mixer.Sound("THE_QUEST/music/Fondo_musi/Loop-Menu.wav")
+#map1_sound= pg.mixer.Sound("THE_QUEST/music/Fondo_musi/Battle_03.ogg")
 

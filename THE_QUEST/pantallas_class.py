@@ -1,4 +1,5 @@
 
+
 import pygame as pg
 from init import *
 from objects import *
@@ -20,6 +21,8 @@ class partidas():
         
         #Puntaje y Tiempo
         self.score=0
+        self.score_anerior=0
+        
         #vidas e inmunidad
         self.vidas=3
         self.inmunidad=120
@@ -45,26 +48,27 @@ class partidas():
         self.font_titles= pg.font.Font("THE_QUEST/Fonts/Silkscreen-Bold.ttf",30)
         self.font_texto = pg.font.Font("THE_QUEST/Fonts/Silkscreen-Regular.ttf",20)
         self.font_titles2= pg.font.Font("THE_QUEST/Fonts/Silkscreen-Bold.ttf",50)
+
+
          #                ---------------------------- Pantalla Del Juego -----------------------------
-    def pantalla_juego(self):
+    def pantalla_juego(self,score):
         
         #Grupo nave
         nave=Nave()
         self.nave_sprites=pg.sprite.Group()
         self.nave_sprites.add(nave)
-        #Disparo
-        bullet=Bullet(100,200)
         #enemigo
         for i in range(enemigos):
             asteroid= Meteo()
             self.asteroids.add(asteroid)
         self.start_ticks=pg.time.get_ticks() #starter tick
         print(self.start_ticks)
-
+        self.hige_score=score
         start=True
         while start:
+            #contador
             self.seconds=int((pg.time.get_ticks()-self.start_ticks)/1000)
-            
+            #eventos
             clock.tick(FPS)
             self.event_list = pg.event.get()
             for event in self.event_list:
@@ -75,6 +79,9 @@ class partidas():
                     if event.key == pg.K_SPACE:
                         bullet=Bullet(nave.rect.centerx,nave.rect.centery)
                         self.bullet_list.add(bullet)
+                        shoot_sound.play()
+
+
             #Colisiones 
             hits=pg.sprite.groupcollide(self.bullet_list, self.asteroids,True,True)
             for hit in hits:
@@ -82,25 +89,33 @@ class partidas():
                 explotar=Explosion(hit.rect.center)
                 asteroid=Meteo()
                 self.asteroids.add(asteroid,explotar)
-                #Quitar los # para activar las colisiones 
+                exposion_sound.play()
+
+                #Colision nave-asteroide, explosion nave y sonido, vida e inmunidad 
             hits=pg.sprite.groupcollide(self.nave_sprites, self.asteroids,False,True)
             for hit in hits:
                 explotar=Explosion(hit.rect.center)
                 asteroid=Meteo()
                 self.nave_sprites.add(explotar)
                 self.asteroids.add(asteroid)
+                exposion_sound.play()
             if hits and self.inmunidad>=120:
                 self.vidas-=1
                 self.inmunidad=0
                 if self.vidas<=0:
+                    #Preparando las puntuasiones
+                    self.score_anerior=self.score
+                    if self.hige_score < self.score:
+                        self.hige_score=self.score
                     start=False
-            #elif self.inmunidad>120:
-             #   self.inmunidad=120
+            elif self.inmunidad>120:
+                self.inmunidad=120
             elif self.inmunidad<120:
                 self.inmunidad+=1
-            print(self.inmunidad)
+        
+            #Musica
+            #map1_sound.play()
 
-             #   start=False
             #Dibujo de listas de objetos
             self.bullet_list.draw(self.pantalla)
             self.asteroids.draw(self.pantalla)
@@ -120,17 +135,21 @@ class partidas():
             if (self.scroll*-1)>=WIDTH:
                 self.scroll = 0
                         #Marcadores
-            dibujar_texto(self.pantalla,str(self.score),25,WIDTH//2,10)
-            dibujar_texto(self.pantalla,str(int(self.seconds)),25,20,10)
-            dibujar_texto(self.pantalla,str(self.vidas),25,750,10)
+            dibujar_texto(self.pantalla,"Score: "+ str(self.score),20,WIDTH//2,10)
+            dibujar_texto(self.pantalla,"Time: "+str(int(self.seconds)),20,50,10)
+            dibujar_texto(self.pantalla,"Vidas: "+ str(self.vidas),20,750,10)
+            dibujar_texto(self.pantalla,"Hige Score:"+ str(self.hige_score),20,WIDTH//2,30)
+            if nave.rect.x==asteroid.rect.x:
+                
+                self.score+=1
             if self.seconds==0:
                 pass
-            elif self.seconds%20==0:
+            elif self.seconds%120==0:
                 print(self.seconds%5)
-                self.score+=1
-
+                self.score+=100
 
             
+
         #pg.quit() 
                      #                ---------------------------- Pantalla Del menu -----------------------------
     def menu_pp(self):
@@ -146,6 +165,7 @@ class partidas():
             for event in self.event_list:
                 if event.type==pg.QUIT:
                     start = False
+                    menu_sound.stop()
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_RETURN:
                         start = False
@@ -161,9 +181,16 @@ class partidas():
             self.pantalla.blit(texto3,(10,380))
             self.pantalla.blit(texto4,(10,420))
             self.pantalla.blit(texto5,(10,460))
+            menu_sound.play()
         #pg.quit() 
+        menu_sound.stop()
+    
+    
                      #                ---------------------------- Pantalla Game Over -----------------------------
+    
+    
     def game_ov(self):
+        self.score_anerior=self.score
         texto=self.font_titles2.render("Pulsa Enter",True,WHITE)
         start=True
         while start:
@@ -173,6 +200,9 @@ class partidas():
                 if event.type==pg.QUIT or event.type== pg.K_BACKSPACE:
                     self.start = False
                 if event.type == pg.KEYDOWN:
+                    if event.type == pg.K_SPACE:
+                        self.pantalla_juego()
+
                     if event.key == pg.K_RETURN:
                         start = False
                     
@@ -182,21 +212,6 @@ class partidas():
 
             
             pg.display.flip()
-            
+        
             
         #pg.quit() 
-salir=False
-while not salir:
-    event_list = pg.event.get()
-    for event in event_list:
-        if event.type==pg.QUIT:
-            start = False
-        if event.type == pg.KEYDOWN:
-            if event.key == pg.K_ESCAPE:
-                salir = True
-    game = partidas()
-    game.menu_pp()
-    game = partidas()
-    game.pantalla_juego()
-    game = partidas()
-    game.game_ov()

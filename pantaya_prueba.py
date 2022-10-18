@@ -10,10 +10,10 @@ res = (720,720)
   
 # opens up a window 
 screen = pygame.display.set_mode(res) 
-  
+
 # white color 
 color = (255,255,255) 
-  
+
 # light shade of the button 
 color_light = (170,170,170) 
   
