@@ -19,4 +19,5 @@ while not salir:
     game.pantalla_juego(scorehige)
     scorehige=game.hige_score
     game = partidas()
+    
     game.game_ov()

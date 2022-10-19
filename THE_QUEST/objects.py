@@ -1,6 +1,6 @@
 
 import pygame as pg
-import random
+from random import randint
 from init import *
  #                ---------------------------- Clase Nave -----------------------------
 class Nave(pg.sprite.Sprite):
@@ -9,14 +9,17 @@ class Nave(pg.sprite.Sprite):
         self.nav= pg.image.load("THE_QUEST/Imagens/Sprites nave1.png").convert()
         self.image=pg.transform.scale(self.nav, (60, 70))
         self.image.set_colorkey(BLACK)
-        
+        self.ancho=80
+        self.alto=90
+        self.rotate=0
+
         self.rect=self.image.get_rect()
          
         self.rect.centerx = -10
         self.rect.centery = 300
         self.animation = ""
         
-    def movimiento(self, xmax=800, ymax=600):
+    def movimiento(self):
         #moviimiento por teclas
         self.vx = 0
         self.vy = 0
@@ -50,13 +53,40 @@ class Nave(pg.sprite.Sprite):
         if self.rect.left < 0:
             self.rect.left =0
         if self.rect.right > WIDTH:
-            self.rect.right = WIDTH
+            self.rect.right = WIDTH        
 
     def update(self):
         self.nav= pg.image.load(self.animation).convert()
-        self.image=pg.transform.scale(self.nav, (80, 90))
+        self.image=pg.transform.scale(self.nav, (self.ancho, self.alto))
         self.image.set_colorkey(BLACK)
 
+    def termino(self):
+        
+        self.image= pg.image.load(self.animation).convert()
+        self.image=pg.transform.scale(self.nav, (self.ancho, self.alto))
+        self.image=pg.transform.rotate(self.image,self.rotate)
+        self.image.set_colorkey(BLACK)
+        if self.rotate < 180:
+           self.rotate+=1
+        
+        self.vx=0
+        if self.rect.centerx==700 and self.rect.centery==300:
+            self.vx=0
+            self.vy=0
+        elif self.rect.centerx < 700:
+            self.vx+=10
+        elif self.rect.centery<300:
+            self.vy+=1
+        elif self.rect.centery>300:
+            self.vy+=-1
+        if self.rect.centerx==700 and self.rect.centery==300 and (self.ancho!=1 or self.alto!=1):
+            self.ancho-=1
+            self.alto-=1
+        
+        self.rect.centerx += self.vx
+        self.rect.centery += self.vy
+        print(self.rect.centerx)
+        print(self.rect.centery)
      #                ---------------------------- Clase Disparo -----------------------------
         
 class Bullet(pg.sprite.Sprite):
@@ -122,23 +152,33 @@ animation_list= meteor_animation()
 class Meteo(pg.sprite.Sprite):
     def __init__(self):
         pg.sprite.Sprite.__init__(self)
+        self.aster_h=randint(30,120)
         self.list_animation = animation_list
-        self.image= self.list_animation[0]
+        self.aster= self.list_animation[0]
+        self.image=pg.transform.scale(self.aster,(self.aster_h, self.aster_h))
         self.image.set_colorkey(BLACK)
         self.rect=self.image.get_rect()
-        self.rect.topleft=[random.randint(830, 870),random.randint(0, 600)]
+        self.rect.topleft=[randint(830, 870),randint(0, 600)]
+        self.score=0
 
         self.index=0
-        self.vx=random.randint(5,9)
+        self.vx=randint(5,9)
     def update(self):
-        
-        self.image=self.list_animation[int(self.index)]
+        self.score=0
+        self.aster=self.list_animation[int(self.index)]
         self.image.set_colorkey(BLACK)
+        self.image=pg.transform.scale(self.aster, (self.aster_h, self.aster_h))
+        
         self.index +=0.25
         self.rect.centerx -= self.vx
         if self.index >= len(self.list_animation):
             self.index=0
+            """
         if self.rect.right < 0:
-            self.rect.centerx= random.randint(840, 1200)
-            self.rect.centery=random.randint(0, 600)
-
+            self.rect.centerx= randint(940, 1400)
+            self.rect.centery=randint(0, 600)
+            self.score+=100 
+            print(self.score)
+            """
+        if self.rect.right<0:
+            self.kill()
