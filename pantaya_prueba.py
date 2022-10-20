@@ -34,8 +34,8 @@ smallfont = pygame.font.SysFont('Corbel',35)
 # rendering a text written in 
 # this font 
 text = smallfont.render('quit' , True , color) 
-  
-while True: 
+game_over=False
+while not game_over: 
       
     for ev in pygame.event.get(): 
           
@@ -50,7 +50,7 @@ while True:
             if width/2 <= mouse[0] <= width/2+140 and height/2 <= mouse[1] <= height/2+40: 
                 pygame.quit() 
                   
-    # fills the screen with a color 
+    
     screen.fill((60,25,60)) 
       
     # stores the (x,y) coordinates into 

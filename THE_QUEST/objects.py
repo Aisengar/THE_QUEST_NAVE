@@ -68,25 +68,24 @@ class Nave(pg.sprite.Sprite):
         self.image.set_colorkey(BLACK)
         if self.rotate < 180:
            self.rotate+=1
-        
+        self.vy=0
         self.vx=0
-        if self.rect.centerx==700 and self.rect.centery==300:
-            self.vx=0
-            self.vy=0
+        if self.rect.centerx==700 and self.rect.centery==300 and self.ancho!=20:
+            self.ancho-=1
+            self.alto-=1
+        elif self.rect.centerx > 700:
+            self.vx-=1
         elif self.rect.centerx < 700:
-            self.vx+=10
+            self.vx+=5
         elif self.rect.centery<300:
             self.vy+=1
         elif self.rect.centery>300:
             self.vy+=-1
-        if self.rect.centerx==700 and self.rect.centery==300 and (self.ancho!=1 or self.alto!=1):
-            self.ancho-=1
-            self.alto-=1
+        
         
         self.rect.centerx += self.vx
         self.rect.centery += self.vy
-        print(self.rect.centerx)
-        print(self.rect.centery)
+        
      #                ---------------------------- Clase Disparo -----------------------------
         
 class Bullet(pg.sprite.Sprite):

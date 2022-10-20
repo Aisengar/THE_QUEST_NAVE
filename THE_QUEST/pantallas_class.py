@@ -1,5 +1,3 @@
-
-
 import pygame as pg
 from init import *
 from objects import *
@@ -24,7 +22,7 @@ class partidas():
         
         
         #vidas e inmunidad
-        self.vidas=3
+        self.vidas=4
         self.inmunidad=120
          #Fin del juego
         self.final=5
@@ -56,7 +54,7 @@ class partidas():
        
 
          #                ---------------------------- Pantalla Del Juego -----------------------------
-    def pantalla_juego(self,score):
+    def pantalla_juego(self,score=0):
         
         #Grupo nave
         nave=Nave()
@@ -77,10 +75,10 @@ class partidas():
                 
             #eventos
             clock.tick(FPS)
-            self.event_list = pg.event.get()
-            for event in self.event_list:
+            self.event = pg.event.get()
+            for event in self.event:
                 if event.type==pg.QUIT:
-                    start = False
+                    return True
                 elif event.type==pg.KEYDOWN:
                     #evento de disparo
                     if event.key == pg.K_SPACE:
@@ -110,11 +108,10 @@ class partidas():
                 self.vidas-=1
                 self.inmunidad=0
                 if self.vidas<=0:
-                    #Preparando las puntuasiones
-                    self.score_anerior=self.score
-                    if self.hige_score < self.score:
-                        self.hige_score=self.score
                     start=False
+            if self.hige_score <= self.score:
+                self.hige_score=self.score
+                    
             elif self.inmunidad>120:
                 self.inmunidad=120
             elif self.inmunidad<120:
@@ -127,7 +124,6 @@ class partidas():
             #creador de objetos
             #if self.seconds%2==0 and self.seconds<=self.final and contador>=20:
             if self.seconds%2==0 and self.seconds<=self.final and contador>=20:
-                print("crear")
                 asteroid=Meteo()
                 self.asteroids.add(asteroid)
                 contador=0
@@ -167,13 +163,15 @@ class partidas():
                 
             if self.seconds>(self.final+3):
                 nave.termino()
+                if self.seconds>(self.final+10):
+                    start=False
             #mouse = pg.mouse.get_pos() 
             #print(mouse)
                         #Marcadores
             dibujar_texto(self.pantalla,"Score: "+ str(self.score),20,WIDTH//2,10)
             dibujar_texto(self.pantalla,"Time: "+str(int(self.seconds)),20,50,10)
             dibujar_texto(self.pantalla,"Vidas: "+ str(self.vidas),20,750,10)
-            dibujar_texto(self.pantalla,"Hige Score:"+ str(self.hige_score),20,WIDTH//2,30)
+            dibujar_texto(self.pantalla,"Hige score:"+ str(self.hige_score),20,WIDTH//2,30)
 
 
 
@@ -188,14 +186,16 @@ class partidas():
         start=True
         while start:
             clock.tick(FPS)
-            self.event_list = pg.event.get()
-            for event in self.event_list:
-                if event.type==pg.QUIT:
-                    start = False
-                    menu_sound.stop()
+            self.event = pg.event.get()
+            for event in self.event:
+                if event.type == pg.QUIT:
+                    return True
+
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_RETURN:
                         start = False
+                    if event.key == pg.K_SPACE:
+                        pass
             pg.display.flip()
                     #Background en movimiento
             
@@ -222,16 +222,15 @@ class partidas():
         start=True
         while start:
             clock.tick(FPS)
-            self.event_list = pg.event.get()
-            for event in self.event_list:
-                if event.type==pg.QUIT or event.type== pg.K_BACKSPACE:
-                    self.start = False
-                if event.type == pg.KEYDOWN:
-                    if event.type == pg.K_SPACE:
-                        self.pantalla_juego()
+            self.event = pg.event.get()
+            for event in self.event:
+                if event.type == pg.QUIT:
+                    return True
 
+                if event.type == pg.KEYDOWN:
                     if event.key == pg.K_RETURN:
                         start = False
+
                     
             self.pantalla.blit(self.background_go,(0,0))#Coloca la imagen del background
             self.pantalla.blit(texto,(200,420))
