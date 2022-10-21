@@ -1,6 +1,7 @@
 import pygame as pg
 from init import *
 from objects import *
+from datos import *
 
 #Funcion para crear texto
 def dibujar_texto(surface, text, size, x, y):
