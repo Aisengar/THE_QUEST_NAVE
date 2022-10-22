@@ -17,8 +17,7 @@ while not salir:
         if not salir:
             salir=game.game_ov()
             nombre=game.user_text
-            insertRow(nombre,higescore)
-            datos= readOrder("name")
-            print(datos)
+            insertRow(nombre,higescore) 
+            
             
     

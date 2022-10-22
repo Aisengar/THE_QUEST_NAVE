@@ -10,7 +10,12 @@ def dibujar_texto(surface, text, size, x, y,color=WHITE,font="THE_QUEST/Fonts/Ro
     text_rect = text_surface.get_rect()
     text_rect.midtop= (x,y)
     surface.blit(text_surface, text_rect)
-
+def dibujar_ranking(surface, text, size, x, y,color=WHITE,font="THE_QUEST/Fonts/RobotoMono-Italic-VariableFont_wght.ttf"):
+    font= pg.font.Font(font,size)
+    text_surface= font.render(text,True,color)
+    text_rect = text_surface.get_rect()
+    text_rect.midleft= (x,y)
+    surface.blit(text_surface, text_rect)
 
 class Partidas():
     def __init__(self ):
@@ -22,6 +27,8 @@ class Partidas():
         #Puntaje
         self.score=0
         
+        self.ranking= readOrder("Score")
+
         #introducir nombre
         self.user_text=""
         
@@ -135,9 +142,9 @@ class Partidas():
             #map1_sound.play()
 
             #Dibujo de listas de objetos
-            self.bullet_list.draw(self.pantalla)
             self.asteroids.draw(self.pantalla)
             self.nave_sprites.draw(self.pantalla)
+            self.bullet_list.draw(self.pantalla)
             if self.seconds<self.final+3:
                 nave.movimiento()
                 nave.update()
@@ -232,17 +239,28 @@ class Partidas():
                     else:
                         self.user_text+=event.unicode
         
-        #for i in range(0,10):
-            
-            #dibujar_texto(self.pantalla,str(self.ranking[i][0]),35,100+(i*10),240+(i*10))
-            #dibujar_texto(self.pantalla,str(self.ranking[i][0]),35,200+(i*10),240+(i*10))
-
             self.pantalla.blit(self.background_go,(0,0))#Coloca la imagen del background
             self.pantalla.blit(texto,(200,420))
             text_sueface=self.font_texto.render(self.user_text,True,WHITE)
-            screen.blit(text_sueface,(300,264))
-            #mouse = pg.mouse.get_pos() 
-            #print(mouse)
+            screen.blit(text_sueface,(228,240))
+            dibujar_texto(self.pantalla,"Ranking Table",30,390,0,color=(255,250,0))
+            dibujar_ranking(self.pantalla,"Name",30,260,50)
+            dibujar_ranking(self.pantalla,"Score",30,430,50)
+            dibujar_texto(self.pantalla,"Write Your Name",20,268,213,color=(255,250,0))
+            dibujar_texto(self.pantalla,"Your Score:",20,498,213,color=(255,250,0))
+            dibujar_texto(self.pantalla,str(self.score),20,498,243)
+            if len(self.ranking)<=5:
+                for i in range(len(self.ranking)):
+                    dibujar_ranking(self.pantalla,(i+1)+str(self.ranking[i][0]),20,260,80+(i*30))
+                    dibujar_ranking(self.pantalla,str(self.ranking[i][1]),20,443,80+(i*30))
+            else:
+                for i in range(4):
+                    dibujar_ranking(self.pantalla,str(self.ranking[i][0]),20,260,80+(i*30))
+                    dibujar_ranking(self.pantalla,str(self.ranking[i][1]),20,443,80+(i*30))
+
+            print(self.ranking)
+            mouse = pg.mouse.get_pos() 
+            print(mouse)
             pg.display.flip()
         return False
             
