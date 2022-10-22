@@ -1,6 +1,6 @@
 import sqlite3 as sql
 import os #este modulo me permite usar el comando para verificar si un archovo existe
-
+import random
 #crea elfichero de sqlite
 def createDB():
     conn=sql.connect("THE_QUEST/Base_datos/ranking.db")
@@ -22,24 +22,32 @@ def createTable():
     conn.close()
 #createTable()
 
+
 # inserta los valores dentro de la lista en sql
 def insertRow(nombre,score):
     conn=sql.connect("THE_QUEST/Base_datos/ranking.db")
     cursor = conn.cursor()
-    instruccion=f"INSERT INTO ranking VALUES (‘{nombre}‘,{score})"  #f"" es una instruccion para un formato string
+    instruccion=f"INSERT INTO ranking VALUES ('{nombre}',{score})"  #f"" es una instruccion para un formato string
     cursor.execute(instruccion)
-    conn.comit()
+    conn.commit()
     conn.close()
 
-#lee todos los datos dentro de la lista de sql en orden desendente de mayor a menor
-def readOrdered(field):
+def readOrder(field):
     conn=sql.connect("THE_QUEST/Base_datos/ranking.db")
-    cursor = conn.cursor()
-    instruccion=f"SELECT * FROM ranking ORDER BY {field} DESC)"  #f"" es una instruccion para un formato string
+    instruccion=f"SELECT * FROM ranking order by {field} DESC"
+    cursor=conn.cursor()
     cursor.execute(instruccion)
-    datos=cursor.fetchall()#almasena todos los datos de forma automatica
-    conn.comit()
+    datos=cursor.fetchall()
+    conn.commit()
     conn.close()
+    return datos
+#insertRow("Cam",random.randint(100,700) )
+
+datos= readOrder("score")
+for i in range(len(datos)):
+    print(datos[i][0])
+    print(datos[i][1])
+    
 
 
 #estas dos instrucciones crearan el archivo de ranking.db

@@ -1,26 +1,29 @@
 import pygame as pg
 from init import *
 from objects import *
-from datos import *
+from datos import readOrder
 
 #Funcion para crear texto
-def dibujar_texto(surface, text, size, x, y):
-    font= pg.font.Font("THE_QUEST/Fonts/RobotoMono-Italic-VariableFont_wght.ttf",size)
-    text_surface= font.render(text,True,WHITE)
+def dibujar_texto(surface, text, size, x, y,color=WHITE,font="THE_QUEST/Fonts/RobotoMono-Italic-VariableFont_wght.ttf"):
+    font= pg.font.Font(font,size)
+    text_surface= font.render(text,True,color)
     text_rect = text_surface.get_rect()
     text_rect.midtop= (x,y)
     surface.blit(text_surface, text_rect)
 
 
-class partidas():
+class Partidas():
     def __init__(self ):
         self.pantalla = pg.display.set_mode((WIDTH,HEIGHT))
         self.asteroids=pg.sprite.Group()
         self.bullet_list=pg.sprite.Group()
-        
-        #Puntaje y Tiempo
+        #lector de los rankings
+        self.datab= readOrder("score")
+        #Puntaje
         self.score=0
         
+        #introducir nombre
+        self.user_text=""
         
         #vidas e inmunidad
         self.vidas=4
@@ -79,13 +82,12 @@ class partidas():
             self.event = pg.event.get()
             for event in self.event:
                 if event.type==pg.QUIT:
-                    return True
-                elif event.type==pg.KEYDOWN:
-                    #evento de disparo
+                    start= False
+                if event.type == pg.KEYDOWN:
                     if event.key == pg.K_SPACE:
                         bullet=Bullet(nave.rect.centerx,nave.rect.centery)
                         self.bullet_list.add(bullet)
-                        #shoot_sound.play()
+                        shoot_sound.play()
 
 
             #Colisiones 
@@ -95,7 +97,7 @@ class partidas():
                 explotar=Explosion(hit.rect.center)
                 asteroid=Meteo()
                 self.asteroids.add(asteroid,explotar)
-                #exposion_sound.play()
+                exposion_sound.play()
 
                 #Colision nave-asteroide, explosion nave y sonido, vida e inmunidad 
             hits=pg.sprite.groupcollide(self.nave_sprites, self.asteroids,False,True)
@@ -104,7 +106,7 @@ class partidas():
                 asteroid=Meteo()
                 self.nave_sprites.add(explotar)
                 self.asteroids.add(asteroid)
-                #exposion_sound.play()
+                exposion_sound.play()
             if hits and self.inmunidad>=120:
                 self.vidas-=1
                 self.inmunidad=0
@@ -173,17 +175,13 @@ class partidas():
             dibujar_texto(self.pantalla,"Time: "+str(int(self.seconds)),20,50,10)
             dibujar_texto(self.pantalla,"Vidas: "+ str(self.vidas),20,750,10)
             dibujar_texto(self.pantalla,"Hige score:"+ str(self.hige_score),20,WIDTH//2,30)
-
+        
 
 
         #pg.quit() 
                      #                ---------------------------- Pantalla Del menu -----------------------------
     def menu_pp(self):
-        texto1=self.font_texto.render("Tecla Arriba: para ascender",True,WHITE)
-        texto2=self.font_texto.render("Tecla Abajo: para descender",True,WHITE)
-        texto3=self.font_texto.render("Tecla Derecha: para ir a la derecha",True,WHITE)
-        texto4=self.font_texto.render("Tecla Izquierda: para ir a la izquierda",True,WHITE)
-        texto5=self.font_texto.render("Espacio: para disparar",True,WHITE)
+
         start=True
         while start:
             clock.tick(FPS)
@@ -191,34 +189,33 @@ class partidas():
             for event in self.event:
                 if event.type == pg.QUIT:
                     return True
-
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_RETURN:
                         start = False
-                    if event.key == pg.K_SPACE:
-                        pass
+                    
             pg.display.flip()
-                    #Background en movimiento
-            
+                    
             self.pantalla.blit(self.backgroundM,(0,0))#Coloca la imagen del background
             #textos menu
-            menu = self.font_titles.render("opciones:",True,WHITE)
-            self.pantalla.blit(menu,(10,240))
-            self.pantalla.blit(texto1,(10,300))
-            self.pantalla.blit(texto2,(10,340))
-            self.pantalla.blit(texto3,(10,380))
-            self.pantalla.blit(texto4,(10,420))
-            self.pantalla.blit(texto5,(10,460))
-            #menu_sound.play()
-        #pg.quit() 
+
+            dibujar_texto(self.pantalla,"Opciones",35,100,240,font="THE_QUEST/Fonts/Silkscreen-Regular.ttf")
+            dibujar_texto(self.pantalla,"Tecla Arriba: para ascender",20,190,300,font="THE_QUEST/Fonts/Silkscreen-Regular.ttf")
+            dibujar_texto(self.pantalla,"Tecla Abajo: para descender",20,190,340,font="THE_QUEST/Fonts/Silkscreen-Regular.ttf")
+            dibujar_texto(self.pantalla,"Tecla Izquierda: para ir a la izquierda",20,260,380,font="THE_QUEST/Fonts/Silkscreen-Regular.ttf")
+            dibujar_texto(self.pantalla,"Tecla Derecha: para ir a la derecha",20,240,420,font="THE_QUEST/Fonts/Silkscreen-Regular.ttf")
+            dibujar_texto(self.pantalla,"Espacio: para disparar",20,160,460,font="THE_QUEST/Fonts/Silkscreen-Regular.ttf")
+            
+            menu_sound.play()
+        #pg.quit()
+        
         menu_sound.stop()
-    
+        return False
     
                      #                ---------------------------- Pantalla Game Over -----------------------------
     
     
     def game_ov(self):
-        self.score_anerior=self.score
+        #self.ranking= readOrdered(score)
         texto=self.font_titles2.render("Pulsa Enter",True,WHITE)
         start=True
         while start:
@@ -227,18 +224,26 @@ class partidas():
             for event in self.event:
                 if event.type == pg.QUIT:
                     return True
-
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_RETURN:
                         start = False
+                    if event.type==pg.K_BACKSPACE:
+                        self.user_text=self.user_text[0:-1]
+                    else:
+                        self.user_text+=event.unicode
+        
+        #for i in range(0,10):
+            
+            #dibujar_texto(self.pantalla,str(self.ranking[i][0]),35,100+(i*10),240+(i*10))
+            #dibujar_texto(self.pantalla,str(self.ranking[i][0]),35,200+(i*10),240+(i*10))
 
-                    
             self.pantalla.blit(self.background_go,(0,0))#Coloca la imagen del background
             self.pantalla.blit(texto,(200,420))
-
-
-            
+            text_sueface=self.font_texto.render(self.user_text,True,WHITE)
+            screen.blit(text_sueface,(300,264))
+            #mouse = pg.mouse.get_pos() 
+            #print(mouse)
             pg.display.flip()
-        
+        return False
             
         #pg.quit() 

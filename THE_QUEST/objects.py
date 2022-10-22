@@ -2,6 +2,7 @@
 import pygame as pg
 from random import randint
 from init import *
+
  #                ---------------------------- Clase Nave -----------------------------
 class Nave(pg.sprite.Sprite):
     def __init__(self):
