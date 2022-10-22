@@ -251,11 +251,13 @@ class Partidas():
             dibujar_texto(self.pantalla,str(self.score),20,498,243)
             if len(self.ranking)<=5:
                 for i in range(len(self.ranking)):
-                    dibujar_ranking(self.pantalla,(i+1)+str(self.ranking[i][0]),20,260,80+(i*30))
+                    numero=i+1
+                    dibujar_ranking(self.pantalla,str(i+1)+". "+str(self.ranking[i][0]),20,250,80+(i*30))
                     dibujar_ranking(self.pantalla,str(self.ranking[i][1]),20,443,80+(i*30))
             else:
                 for i in range(4):
-                    dibujar_ranking(self.pantalla,str(self.ranking[i][0]),20,260,80+(i*30))
+                    numero=i+1
+                    dibujar_ranking(self.pantalla,str(i+1)+". "+str(self.ranking[i][0]),20,250,80+(i*30))
                     dibujar_ranking(self.pantalla,str(self.ranking[i][1]),20,443,80+(i*30))
 
             print(self.ranking)
