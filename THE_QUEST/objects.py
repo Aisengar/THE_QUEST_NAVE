@@ -162,9 +162,8 @@ class Meteo(pg.sprite.Sprite):
         self.score=0
 
         self.index=0
-        self.vx=randint(5,9)
+        self.vx=randint(7,10)
     def update(self):
-        self.score=0
         self.aster=self.list_animation[int(self.index)]
         self.image.set_colorkey(BLACK)
         self.image=pg.transform.scale(self.aster, (self.aster_h, self.aster_h))
@@ -173,12 +172,9 @@ class Meteo(pg.sprite.Sprite):
         self.rect.centerx -= self.vx
         if self.index >= len(self.list_animation):
             self.index=0
-            """
-        if self.rect.right < 0:
-            self.rect.centerx= randint(940, 1400)
-            self.rect.centery=randint(0, 600)
-            self.score+=100 
-            print(self.score)
-            """
+        if self.rect.right<=0:
+            self.score+=1
         if self.rect.right<0:
             self.kill()
+            print("destruir")
+  

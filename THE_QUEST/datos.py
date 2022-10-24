@@ -38,12 +38,6 @@ def readOrder(field):
     conn.close()
     return datos
 #insertRow("Cam",random.randint(100,700) )
-"""
-datos= readOrder("score")
-for i in range(len(datos)):
-    print(datos[i][0])
-    print(datos[i][1])
-"""    
 
 
 #estas dos instrucciones crearan el archivo de ranking.db

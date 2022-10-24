@@ -14,6 +14,8 @@ while not salir:
         game=Partidas()
         salir=game.pantalla_juego(higescore)
         higescore= game.hige_score
+        if game.vidas>0:
+            game.pantalla_juego2(higescore)
         if not salir:
             salir=game.game_ov()
             nombre=game.user_text

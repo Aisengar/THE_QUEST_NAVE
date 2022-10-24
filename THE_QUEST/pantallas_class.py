@@ -62,7 +62,7 @@ class Partidas():
         self.font_titles= pg.font.Font("THE_QUEST/Fonts/Silkscreen-Bold.ttf",30)
         self.font_texto = pg.font.Font("THE_QUEST/Fonts/Silkscreen-Regular.ttf",20)
         self.font_titles2= pg.font.Font("THE_QUEST/Fonts/Silkscreen-Bold.ttf",50)
-       
+        self.lista_meteo=[]
 
          #                ---------------------------- Pantalla Del Juego -----------------------------
     def pantalla_juego(self,score=0):
@@ -72,9 +72,134 @@ class Partidas():
         self.nave_sprites=pg.sprite.Group()
         self.nave_sprites.add(nave)
         #enemigo
+        self.start_ticks=pg.time.get_ticks() #starter tick
+        self.hige_score=score
+        start=True
+        contador=0
+
+        while start:
+            #contador
+            self.seconds=int((pg.time.get_ticks()-self.start_ticks)/1000)
+                
+            #eventos
+            clock.tick(FPS)
+            self.event = pg.event.get()
+            for event in self.event:
+                if event.type==pg.QUIT:
+                    start= False
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_SPACE:
+                        bullet=Bullet(nave.rect.centerx,nave.rect.centery)
+                        self.bullet_list.add(bullet)
+                        #shoot_sound.play()
+
+
+            #Colisiones 
+            hits=pg.sprite.groupcollide(self.bullet_list, self.asteroids,True,True)
+            for hit in hits:
+                self.score += 100
+                explotar=Explosion(hit.rect.center)
+                asteroid=Meteo()
+                self.asteroids.add(asteroid,explotar)
+                self.lista_meteo.append(asteroid)
+                #exposion_sound.play()
+
+                #Colision nave-asteroide, explosion nave y sonido, vida e inmunidad 
+            hits=pg.sprite.groupcollide(self.nave_sprites, self.asteroids,False,True)
+            for hit in hits:
+                explotar=Explosion(hit.rect.center)
+                asteroid=Meteo()
+                self.nave_sprites.add(explotar)
+                self.asteroids.add(asteroid)
+                self.lista_meteo.append(asteroid)
+                
+                #exposion_sound.play()
+            if hits and self.inmunidad>=120:
+                self.vidas-=1
+                self.inmunidad=0
+                if self.vidas<=0:
+                    start=False
+            if self.hige_score <= self.score:
+                self.hige_score=self.score
+                    
+            elif self.inmunidad>120:
+                self.inmunidad=120
+            elif self.inmunidad<120:
+                self.inmunidad+=1
+
+
+            #limitador de creador
+            contador+=1
+    
+            #creador de objetos
+            if self.seconds>3:
+                if self.seconds%2==0 and self.seconds<=self.final and contador>=20:
+                    asteroid=Meteo()
+                    self.asteroids.add(asteroid)
+                    self.lista_meteo.append(asteroid)
+                    contador=0
+            
+            #Musica
+            #map1_sound.play()
+
+            #Dibujo de listas de objetos
+            self.asteroids.draw(self.pantalla)
+            self.nave_sprites.draw(self.pantalla)
+            self.bullet_list.draw(self.pantalla)
+            if self.seconds<self.final+3:
+                nave.movimiento()
+                nave.update()
+            pg.display.flip()
+            
+            #Updates
+            self.asteroids.update()
+            self.bullet_list.update()
+            self.nave_sprites.update()
+            #Background en movimiento
+            for i in range(2):
+                self.pantalla.blit(self.background,(i*WIDTH+self.scroll,0))#Coloca la imagen del background
+                if self.seconds <=self.final:
+                    self.scroll-=3
+                
+            if (self.scroll*-1)>=WIDTH:
+                self.scroll = 0
+                
+            if self.seconds==0:
+                pass
+            #Puntaje extra por completar el nivel
+            elif self.seconds%50==0:
+                self.score+=100
+             #imprimir el planeta en pantalla
+            if self.seconds >=self.final:#cuando termine el juego
+                self.pantalla.blit(self.planeta,(-50+WIDTH+self.scroll,-50))
+                
+            if self.seconds>(self.final+3):
+                nave.termino()
+                if self.seconds>(self.final+10):
+                    start=False
+            if self.seconds>=0  and self.seconds<3:
+                dibujar_ranking(self.pantalla,"Mundo 1",60,262,153,color=(255,255,0))
+                dibujar_ranking(self.pantalla,"Start",60,266,240)
+            mouse = pg.mouse.get_pos() 
+            print(mouse)
+                        #Marcadores
+            dibujar_texto(self.pantalla,"Score: "+ str(self.score),20,WIDTH//2,10)
+            dibujar_texto(self.pantalla,"Time: "+str(int(self.seconds)),20,50,10)
+            dibujar_texto(self.pantalla,"Vidas: "+ str(self.vidas),20,750,10)
+            dibujar_texto(self.pantalla,"Hige score:"+ str(self.hige_score),20,WIDTH//2,30)
+            print(len(self.lista_meteo))
+
+# -----------------------------------Pantalla Juego nivel 2 ----------------
+    def pantalla_juego2(self, score):
+        #Grupo nave
+        nave=Nave()
+        self.nave_sprites=pg.sprite.Group()
+        self.nave_sprites.add(nave)
+        #enemigo
         for i in range(enemigos):
             asteroid= Meteo()
             self.asteroids.add(asteroid)
+            self.lista_meteo.append(asteroid)
         self.start_ticks=pg.time.get_ticks() #starter tick
         self.hige_score=score
         start=True
@@ -94,7 +219,7 @@ class Partidas():
                     if event.key == pg.K_SPACE:
                         bullet=Bullet(nave.rect.centerx,nave.rect.centery)
                         self.bullet_list.add(bullet)
-                        shoot_sound.play()
+                        #shoot_sound.play()
 
 
             #Colisiones 
@@ -104,7 +229,8 @@ class Partidas():
                 explotar=Explosion(hit.rect.center)
                 asteroid=Meteo()
                 self.asteroids.add(asteroid,explotar)
-                exposion_sound.play()
+                self.lista_meteo.append(asteroid)
+                #exposion_sound.play()
 
                 #Colision nave-asteroide, explosion nave y sonido, vida e inmunidad 
             hits=pg.sprite.groupcollide(self.nave_sprites, self.asteroids,False,True)
@@ -113,7 +239,9 @@ class Partidas():
                 asteroid=Meteo()
                 self.nave_sprites.add(explotar)
                 self.asteroids.add(asteroid)
-                exposion_sound.play()
+                self.lista_meteo.append(asteroid)
+                
+                #exposion_sound.play()
             if hits and self.inmunidad>=120:
                 self.vidas-=1
                 self.inmunidad=0
@@ -136,6 +264,7 @@ class Partidas():
             if self.seconds%2==0 and self.seconds<=self.final and contador>=20:
                 asteroid=Meteo()
                 self.asteroids.add(asteroid)
+                self.lista_meteo.append(asteroid)
                 contador=0
             
             #Musica
@@ -182,10 +311,7 @@ class Partidas():
             dibujar_texto(self.pantalla,"Time: "+str(int(self.seconds)),20,50,10)
             dibujar_texto(self.pantalla,"Vidas: "+ str(self.vidas),20,750,10)
             dibujar_texto(self.pantalla,"Hige score:"+ str(self.hige_score),20,WIDTH//2,30)
-        
 
-
-        #pg.quit() 
                      #                ---------------------------- Pantalla Del menu -----------------------------
     def menu_pp(self):
 
@@ -211,8 +337,7 @@ class Partidas():
             dibujar_texto(self.pantalla,"Tecla Izquierda: para ir a la izquierda",20,260,380,font="THE_QUEST/Fonts/Silkscreen-Regular.ttf")
             dibujar_texto(self.pantalla,"Tecla Derecha: para ir a la derecha",20,240,420,font="THE_QUEST/Fonts/Silkscreen-Regular.ttf")
             dibujar_texto(self.pantalla,"Espacio: para disparar",20,160,460,font="THE_QUEST/Fonts/Silkscreen-Regular.ttf")
-            
-            menu_sound.play()
+            #menu_sound.play()
         #pg.quit()
         
         menu_sound.stop()
@@ -251,19 +376,15 @@ class Partidas():
             dibujar_texto(self.pantalla,str(self.score),20,498,243)
             if len(self.ranking)<=5:
                 for i in range(len(self.ranking)):
-                    numero=i+1
                     dibujar_ranking(self.pantalla,str(i+1)+". "+str(self.ranking[i][0]),20,250,80+(i*30))
                     dibujar_ranking(self.pantalla,str(self.ranking[i][1]),20,443,80+(i*30))
             else:
                 for i in range(4):
-                    numero=i+1
                     dibujar_ranking(self.pantalla,str(i+1)+". "+str(self.ranking[i][0]),20,250,80+(i*30))
                     dibujar_ranking(self.pantalla,str(self.ranking[i][1]),20,443,80+(i*30))
 
-            print(self.ranking)
-            mouse = pg.mouse.get_pos() 
-            print(mouse)
+            #mouse = pg.mouse.get_pos() 
+            #print(mouse)
             pg.display.flip()
         return False
-            
-        #pg.quit() 
+             
