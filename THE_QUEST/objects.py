@@ -93,7 +93,7 @@ class Bullet(pg.sprite.Sprite):
     def __init__(self,x,y) -> None:
         super().__init__()
         self.image = pg.image.load("THE_QUEST/Imagens/Disparo.gif")
-        self.image.set_colorkey(BLACK)
+        self.image.set_colorkey(WHITE)
         self.rect=self.image.get_rect()
         self.rect.centery=y
         self.rect.centerx=x

@@ -23,23 +23,21 @@ class Partidas():
         self.asteroids=pg.sprite.Group()
         self.bullet_list=pg.sprite.Group()
         #lector de los rankings
-        self.datab= readOrder("score")
+        self.ranking= readOrder("Score")
         #Puntaje
         self.score=0
-        
-        self.ranking= readOrder("Score")
-
+        self.start=True
         #introducir nombre
         self.user_text=""
         
         #vidas e inmunidad
         self.vidas=4
-        self.inmunidad=120
+        self.inmunidad=80
          #Fin del juego
-        self.final=5
+        self.final=10
 
         #fondo para Menu
-        self.FondoM = pg.image.load("THE_QUEST/Imagens/Imagen para menu.jpeg").convert()
+        self.FondoM = pg.image.load("THE_QUEST/Imagens/Fondo_Historia.jpeg").convert()
         self.backgroundM = pg.transform.scale(self.FondoM, (WIDTH, HEIGHT))#esta parte me permite redimensionar el tamaño del bakground
 
         #fondo para mision 1
@@ -47,8 +45,8 @@ class Partidas():
         self.background = pg.transform.scale(self.Fondo1, (WIDTH, HEIGHT))#esta parte me permite redimensionar el tamaño del bakground
 
         #fondo para mundo 2
-        self.Fondo2 = pg.image.load("THE_QUEST/Imagens/fondo1.png").convert()
-        self.background2 = pg.transform.scale(self.Fondo2, (WIDTH, HEIGHT))#esta parte me permite redimensionar el tamaño del bakground
+        self.Fondo2 = pg.image.load("THE_QUEST/Imagens/planeta_destruido.jpeg").convert()
+        self.Fondo2 = pg.transform.scale(self.Fondo2, (WIDTH, HEIGHT))#esta parte me permite redimensionar el tamaño del bakground
 
         #Fondo para Game OVER
         self.game_over = pg.image.load("THE_QUEST/Imagens/game_over.jpeg").convert()
@@ -57,7 +55,12 @@ class Partidas():
         self.planeta= pg.image.load("THE_QUEST/Imagens/Planetas/planet.png").convert()
         self.planeta.set_colorkey(BLACK)
 
+        self.planeta2= pg.image.load("THE_QUEST/Imagens/Planetas/PlanetaTierra.png").convert()
+        self.planeta2 = pg.transform.scale(self.planeta2, (600, 600))
+        self.planeta2.set_colorkey(BLACK)
+
         self.scroll =0
+        self.scroll_planeta=0
         #fuentes
         self.font_titles= pg.font.Font("THE_QUEST/Fonts/Silkscreen-Bold.ttf",30)
         self.font_texto = pg.font.Font("THE_QUEST/Fonts/Silkscreen-Regular.ttf",20)
@@ -74,25 +77,30 @@ class Partidas():
         #enemigo
         self.start_ticks=pg.time.get_ticks() #starter tick
         self.hige_score=score
-        start=True
+        
         contador=0
 
-        while start:
+        while self.start:
+            map1_sound.play()
+            pg.mixer.Channel(0).play(map1_sound)
+            map1_sound.set_volume(0.1)
             #contador
             self.seconds=int((pg.time.get_ticks()-self.start_ticks)/1000)
-                
+            #Musica
             #eventos
             clock.tick(FPS)
             self.event = pg.event.get()
             for event in self.event:
                 if event.type==pg.QUIT:
-                    start= False
+                    self.start= False
+                    return True
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_SPACE:
                         bullet=Bullet(nave.rect.centerx,nave.rect.centery)
                         self.bullet_list.add(bullet)
-                        #shoot_sound.play()
-
+                        pg.mixer.Channel(1).play(shoot_sound)
+                        shoot_sound.set_volume(0.5)
+            
 
             #Colisiones 
             hits=pg.sprite.groupcollide(self.bullet_list, self.asteroids,True,True)
@@ -102,7 +110,8 @@ class Partidas():
                 asteroid=Meteo()
                 self.asteroids.add(asteroid,explotar)
                 self.lista_meteo.append(asteroid)
-                #exposion_sound.play()
+                pg.mixer.Channel(2).play(exposion_sound)
+                exposion_sound.set_volume(0.5)
 
                 #Colision nave-asteroide, explosion nave y sonido, vida e inmunidad 
             hits=pg.sprite.groupcollide(self.nave_sprites, self.asteroids,False,True)
@@ -112,36 +121,29 @@ class Partidas():
                 self.nave_sprites.add(explotar)
                 self.asteroids.add(asteroid)
                 self.lista_meteo.append(asteroid)
-                
-                #exposion_sound.play()
+                pg.mixer.Channel(2).play(exposion_sound)
+                exposion_sound.set_volume(0.5)
             if hits and self.inmunidad>=120:
                 self.vidas-=1
                 self.inmunidad=0
                 if self.vidas<=0:
-                    start=False
+                    self.start=False
             if self.hige_score <= self.score:
                 self.hige_score=self.score
-                    
-            elif self.inmunidad>120:
-                self.inmunidad=120
-            elif self.inmunidad<120:
-                self.inmunidad+=1
-
+            
+            self.inmunidad+=1
 
             #limitador de creador
-            contador+=1
+            contador+=2
     
             #creador de objetos
-            if self.seconds>3:
+            if self.seconds>3 and self.seconds<self.final-3:
                 if self.seconds%2==0 and self.seconds<=self.final and contador>=20:
                     asteroid=Meteo()
                     self.asteroids.add(asteroid)
                     self.lista_meteo.append(asteroid)
                     contador=0
             
-            #Musica
-            #map1_sound.play()
-
             #Dibujo de listas de objetos
             self.asteroids.draw(self.pantalla)
             self.nave_sprites.draw(self.pantalla)
@@ -160,6 +162,7 @@ class Partidas():
                 self.pantalla.blit(self.background,(i*WIDTH+self.scroll,0))#Coloca la imagen del background
                 if self.seconds <=self.final:
                     self.scroll-=3
+                    
                 
             if (self.scroll*-1)>=WIDTH:
                 self.scroll = 0
@@ -171,14 +174,16 @@ class Partidas():
                 self.score+=100
              #imprimir el planeta en pantalla
             if self.seconds >=self.final:#cuando termine el juego
-                self.pantalla.blit(self.planeta,(-50+WIDTH+self.scroll,-50))
+                self.pantalla.blit(self.planeta,(600+self.scroll_planeta,-56))
+                if self.seconds>=self.final and self.seconds<=self.final+1:
+                        self.scroll_planeta-=3
                 
             if self.seconds>(self.final+3):
                 nave.termino()
-                if self.seconds>(self.final+10):
-                    start=False
+                if self.seconds>(self.final+15):
+                    self.start=False
             if self.seconds>=0  and self.seconds<3:
-                dibujar_ranking(self.pantalla,"Mundo 1",60,262,153,color=(255,255,0))
+                dibujar_ranking(self.pantalla,"World 1",60,262,153,color=(255,255,0))
                 dibujar_ranking(self.pantalla,"Start",60,266,240)
             mouse = pg.mouse.get_pos() 
             print(mouse)
@@ -187,40 +192,48 @@ class Partidas():
             dibujar_texto(self.pantalla,"Time: "+str(int(self.seconds)),20,50,10)
             dibujar_texto(self.pantalla,"Vidas: "+ str(self.vidas),20,750,10)
             dibujar_texto(self.pantalla,"Hige score:"+ str(self.hige_score),20,WIDTH//2,30)
-            print(len(self.lista_meteo))
+            """
+            if self.seconds >= self.final+4:
+                dibujar_ranking(self.pantalla,"Congratulations",40,44,129)
+                dibujar_ranking(self.pantalla,"Level 1 Complite",40,44,180)
+            """
+        map1_sound.stop()
+        return False
 
 # -----------------------------------Pantalla Juego nivel 2 ----------------
     def pantalla_juego2(self, score):
+        self.start=True
         #Grupo nave
         nave=Nave()
         self.nave_sprites=pg.sprite.Group()
         self.nave_sprites.add(nave)
         #enemigo
-        for i in range(enemigos):
-            asteroid= Meteo()
-            self.asteroids.add(asteroid)
-            self.lista_meteo.append(asteroid)
         self.start_ticks=pg.time.get_ticks() #starter tick
         self.hige_score=score
-        start=True
+        self.scroll_planeta=0
         contador=0
-        while start:
-        
+
+        while self.start:
+            map1_sound.play()
+            pg.mixer.Channel(0).play(map1_sound)
+            map1_sound.set_volume(0.1)
             #contador
             self.seconds=int((pg.time.get_ticks()-self.start_ticks)/1000)
-                
+            #Musica
             #eventos
             clock.tick(FPS)
             self.event = pg.event.get()
             for event in self.event:
                 if event.type==pg.QUIT:
-                    start= False
+                    self.start= False
+                    return True
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_SPACE:
                         bullet=Bullet(nave.rect.centerx,nave.rect.centery)
                         self.bullet_list.add(bullet)
-                        #shoot_sound.play()
-
+                        pg.mixer.Channel(1).play(shoot_sound)
+                        shoot_sound.set_volume(0.5)
+            
 
             #Colisiones 
             hits=pg.sprite.groupcollide(self.bullet_list, self.asteroids,True,True)
@@ -230,7 +243,8 @@ class Partidas():
                 asteroid=Meteo()
                 self.asteroids.add(asteroid,explotar)
                 self.lista_meteo.append(asteroid)
-                #exposion_sound.play()
+                pg.mixer.Channel(2).play(exposion_sound)
+                exposion_sound.set_volume(0.5)
 
                 #Colision nave-asteroide, explosion nave y sonido, vida e inmunidad 
             hits=pg.sprite.groupcollide(self.nave_sprites, self.asteroids,False,True)
@@ -240,36 +254,29 @@ class Partidas():
                 self.nave_sprites.add(explotar)
                 self.asteroids.add(asteroid)
                 self.lista_meteo.append(asteroid)
-                
-                #exposion_sound.play()
+                pg.mixer.Channel(2).play(exposion_sound)
+                exposion_sound.set_volume(0.5)
             if hits and self.inmunidad>=120:
                 self.vidas-=1
                 self.inmunidad=0
                 if self.vidas<=0:
-                    start=False
+                    self.start=False
             if self.hige_score <= self.score:
                 self.hige_score=self.score
-                    
-            elif self.inmunidad>120:
-                self.inmunidad=120
-            elif self.inmunidad<120:
-                self.inmunidad+=1
-
+            
+            self.inmunidad+=1
 
             #limitador de creador
-            contador+=1
+            contador+=3
     
             #creador de objetos
-            #if self.seconds%2==0 and self.seconds<=self.final and contador>=20:
-            if self.seconds%2==0 and self.seconds<=self.final and contador>=20:
-                asteroid=Meteo()
-                self.asteroids.add(asteroid)
-                self.lista_meteo.append(asteroid)
-                contador=0
+            if self.seconds>3 and self.seconds<self.final-3:
+                if self.seconds%2==0 and self.seconds<=self.final and contador>=20:
+                    asteroid=Meteo()
+                    self.asteroids.add(asteroid)
+                    self.lista_meteo.append(asteroid)
+                    contador=0
             
-            #Musica
-            #map1_sound.play()
-
             #Dibujo de listas de objetos
             self.asteroids.draw(self.pantalla)
             self.nave_sprites.draw(self.pantalla)
@@ -288,36 +295,53 @@ class Partidas():
                 self.pantalla.blit(self.background,(i*WIDTH+self.scroll,0))#Coloca la imagen del background
                 if self.seconds <=self.final:
                     self.scroll-=3
+                    
                 
             if (self.scroll*-1)>=WIDTH:
                 self.scroll = 0
                 
             if self.seconds==0:
                 pass
-            elif self.seconds%60==0:
+            #Puntaje extra por completar el nivel
+            elif self.seconds%50==0:
                 self.score+=100
              #imprimir el planeta en pantalla
             if self.seconds >=self.final:#cuando termine el juego
-                self.pantalla.blit(self.planeta,(-50+WIDTH+self.scroll,-50))
+                self.pantalla.blit(self.planeta,(600+self.scroll_planeta,-56))
+                if self.seconds>=self.final and self.seconds<=self.final+1:
+                        self.scroll_planeta-=3
                 
             if self.seconds>(self.final+3):
                 nave.termino()
-                if self.seconds>(self.final+10):
-                    start=False
-            #mouse = pg.mouse.get_pos() 
-            #print(mouse)
+                if self.seconds>(self.final+15):
+                    self.start=False
+            if self.seconds>=0  and self.seconds<3:
+                dibujar_ranking(self.pantalla,"World 2",60,262,153,color=(255,255,0))
+                dibujar_ranking(self.pantalla,"Start",60,266,240)
+            mouse = pg.mouse.get_pos() 
+            print(mouse)
                         #Marcadores
             dibujar_texto(self.pantalla,"Score: "+ str(self.score),20,WIDTH//2,10)
             dibujar_texto(self.pantalla,"Time: "+str(int(self.seconds)),20,50,10)
             dibujar_texto(self.pantalla,"Vidas: "+ str(self.vidas),20,750,10)
             dibujar_texto(self.pantalla,"Hige score:"+ str(self.hige_score),20,WIDTH//2,30)
+            """
+            if self.seconds >= self.final+4:
+                dibujar_ranking(self.pantalla,"Congratulations",40,44,129)
+                dibujar_ranking(self.pantalla,"Level 1 Complite",40,44,180)
+            """
+        map1_sound.stop()
 
                      #                ---------------------------- Pantalla Del menu -----------------------------
     def menu_pp(self):
-
+        self.start_ticks=pg.time.get_ticks()
         start=True
         while start:
+            menu_sound.play()
+            menu_sound.set_volume(0.5)
+            self.seconds=int((pg.time.get_ticks()-self.start_ticks)/1000)
             clock.tick(FPS)
+            
             self.event = pg.event.get()
             for event in self.event:
                 if event.type == pg.QUIT:
@@ -325,21 +349,49 @@ class Partidas():
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_RETURN:
                         start = False
-                    
+                if self.seconds>15:
+                    if event.type == pg.MOUSEBUTTONDOWN: 
+                        if 409 <= mouse[0] <= 540 and 420 <= mouse[1] <= 480: 
+                            start=False
+            
             pg.display.flip()
-                    
-            self.pantalla.blit(self.backgroundM,(0,0))#Coloca la imagen del background
-            #textos menu
+            self.pantalla.blit(self.Fondo2,(0,0))#Coloca la imagen del background
+            mouse = pg.mouse.get_pos() 
+            print(mouse)
 
-            dibujar_texto(self.pantalla,"Opciones",35,100,240,font="THE_QUEST/Fonts/Silkscreen-Regular.ttf")
-            dibujar_texto(self.pantalla,"Tecla Arriba: para ascender",20,190,300,font="THE_QUEST/Fonts/Silkscreen-Regular.ttf")
-            dibujar_texto(self.pantalla,"Tecla Abajo: para descender",20,190,340,font="THE_QUEST/Fonts/Silkscreen-Regular.ttf")
-            dibujar_texto(self.pantalla,"Tecla Izquierda: para ir a la izquierda",20,260,380,font="THE_QUEST/Fonts/Silkscreen-Regular.ttf")
-            dibujar_texto(self.pantalla,"Tecla Derecha: para ir a la derecha",20,240,420,font="THE_QUEST/Fonts/Silkscreen-Regular.ttf")
-            dibujar_texto(self.pantalla,"Espacio: para disparar",20,160,460,font="THE_QUEST/Fonts/Silkscreen-Regular.ttf")
-            #menu_sound.play()
-        #pg.quit()
-        
+            #textos menu
+                           
+            dibujar_ranking(self.pantalla,"AÑO DCCXLVIII",35,250,140)
+            dibujar_ranking(self.pantalla,"la señal de proximidad del planeta X-34 se a activado, tu piloto ",18,10,200,)
+            dibujar_ranking(self.pantalla,"has sido despertado de tu sueño criogenico, el viaje consumio la mayoria",18,10,240)
+            dibujar_ranking(self.pantalla,"de nuestros recursos y delante nuestro se encuentra un cinturon de",18,10,280)
+            dibujar_ranking(self.pantalla,"asteroides que bloquea nuestra ultima esperanza. Contamos contigo para ",18,10,320)
+            dibujar_ranking(self.pantalla,"mentener a nuestra gente sana y salva, quedan cuatro compartimentos ",18,10,360)
+            dibujar_ranking(self.pantalla,"estables y funcionales, protegelos. La mejora de las suertes piloto",18,10,400)
+            dibujar_ranking(self.pantalla,"Final de Vitacora",35,10,440) 
+
+
+            if self.seconds>14:
+                self.pantalla.blit(self.backgroundM,(0,0))#Coloca la imagen del background
+                mouse = pg.mouse.get_pos() 
+                print(mouse)
+
+                if 409 <= mouse[0] <= 540 and 420 <= mouse[1] <= 480: 
+                    pg.draw.rect(screen,color_light,[409,420,140,40]) 
+                else: 
+                    pg.draw.rect(screen,color_dark,[409,420,140,40])
+                #textos menu
+                dibujar_ranking(self.pantalla,"Start",35,415,440,font="THE_QUEST/Fonts/Silkscreen-Regular.ttf")
+                dibujar_texto(self.pantalla,"Opciones",35,100,140,font="THE_QUEST/Fonts/Silkscreen-Regular.ttf")
+                dibujar_texto(self.pantalla,"Tecla Arriba: para ascender",20,190,200,font="THE_QUEST/Fonts/Silkscreen-Regular.ttf")
+                dibujar_texto(self.pantalla,"Tecla Abajo: para descender",20,190,240,font="THE_QUEST/Fonts/Silkscreen-Regular.ttf")
+                dibujar_texto(self.pantalla,"Tecla Izquierda: para ir a la izquierda",20,260,280,font="THE_QUEST/Fonts/Silkscreen-Regular.ttf")
+                dibujar_texto(self.pantalla,"Tecla Derecha: para ir a la derecha",20,240,320,font="THE_QUEST/Fonts/Silkscreen-Regular.ttf")
+                dibujar_texto(self.pantalla,"Espacio: para disparar",20,160,360,font="THE_QUEST/Fonts/Silkscreen-Regular.ttf")
+                menu_sound.play()
+                menu_sound.set_volume(0.5)
+            
+            
         menu_sound.stop()
         return False
     
@@ -359,11 +411,12 @@ class Partidas():
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_RETURN:
                         start = False
-                    if event.type==pg.K_BACKSPACE:
-                        self.user_text=self.user_text[0:-1]
+                    if event.key==pg.K_BACKSPACE:
+                        self.user_text=self.user_text[:-1]
                     else:
-                        self.user_text+=event.unicode
-        
+                        if len(self.user_text) < 3:
+                            self.user_text+=event.unicode
+
             self.pantalla.blit(self.background_go,(0,0))#Coloca la imagen del background
             self.pantalla.blit(texto,(200,420))
             text_sueface=self.font_texto.render(self.user_text,True,WHITE)

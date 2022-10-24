@@ -8,8 +8,9 @@ clock= pg.time.Clock()
 contador =0
 BLACK=(0, 0, 0)
 WHITE= (255,255,255)
-#objects
-enemigos = 2
+color_light = (170,170,170)
+color_dark = (100,100,100) 
+
 #Booleans
 start = True
 #pantalla
@@ -25,5 +26,5 @@ background = pg.transform.scale(Fondo1, (WIDTH, HEIGHT))#esta parte me permite r
 #Sonidos
 exposion_sound= pg.mixer.Sound("THE_QUEST/music/Explosion/explosion.wav")
 shoot_sound= pg.mixer.Sound("THE_QUEST/music/Disparo/laserpew.ogg")
-menu_sound= pg.mixer.Sound("THE_QUEST/music/Fondo_musi/Loop-Menu.wav")
-#map1_sound= pg.mixer.Sound("THE_QUEST/music/Fondo_musi/Battle_03.ogg")
+menu_sound= pg.mixer.Sound("THE_QUEST/music/Fondo_musi/space_elevator.wav")
+map1_sound= pg.mixer.Sound("THE_QUEST/music/Fondo_musi/Battle Theme II v1.2.mp3")
