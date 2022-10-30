@@ -1,6 +1,5 @@
 import sqlite3 as sql
-import os #este modulo me permite usar el comando para verificar si un archovo existe
-#import random
+import os
 
 def createDB():
     conn=sql.connect("THE_QUEST/Base_datos/ranking.db")
@@ -37,12 +36,8 @@ def readOrder(field):
     conn.commit()
     conn.close()
     return datos
-#insertRow("Cam",random.randint(100,700) )
 
-
-#estas dos instrucciones crearan el archivo de ranking.db
 while not os.path.exists("THE_QUEST/Base_datos/ranking.db"):
-    print("Empezo")
     if not os.path.exists("THE_QUEST/Base_datos/ranking.db"):
         createDB()
     if os.path.exists("THE_QUEST/Base_datos/ranking.db"):

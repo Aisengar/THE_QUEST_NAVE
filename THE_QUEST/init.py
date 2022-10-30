@@ -8,6 +8,7 @@ clock= pg.time.Clock()
 contador =0
 BLACK=(0, 0, 0)
 WHITE= (255,255,255)
+YELLOW=(255,255,0)
 color_light = (170,170,170)
 color_dark = (100,100,100) 
 

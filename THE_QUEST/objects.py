@@ -13,7 +13,7 @@ class Nave(pg.sprite.Sprite):
         self.ancho=80
         self.alto=90
         self.rotate=0
-
+        self.asteroid=Meteo()
         self.rect=self.image.get_rect()
          
         self.rect.centerx = -10
@@ -172,9 +172,15 @@ class Meteo(pg.sprite.Sprite):
         self.rect.centerx -= self.vx
         if self.index >= len(self.list_animation):
             self.index=0
-        if self.rect.right<=0:
-            self.score+=1
-        if self.rect.right<0:
+        if self.rect.right< -40:
             self.kill()
-            print("destruir")
+            self.score=100
+            
+            
+    def puntos(self):        
+        if self.score != 100:
+            if self.rect.left<=0:
+                self.score=100
+        return self.score
+            
   
