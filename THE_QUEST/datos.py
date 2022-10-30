@@ -38,6 +38,15 @@ def readOrder(field):
     return datos
 
 while not os.path.exists("THE_QUEST/Base_datos/ranking.db"):
+    directorio = "THE_QUEST/Base_datos"
+    try:
+        os.mkdir(directorio)
+    except OSError:
+        print("La creación del directorio %s falló" % directorio)
+    else:
+        print("Se ha creado el directorio: %s " % directorio)
+
+
     if not os.path.exists("THE_QUEST/Base_datos/ranking.db"):
         createDB()
     if os.path.exists("THE_QUEST/Base_datos/ranking.db"):
