@@ -1,5 +1,4 @@
-# THE_QUEST_NAVE
-
+# THE_QUEST
 juego de naves en el cual tendrás que destruir e ir esquivando los diferentes asteroides que se cruzan en pantalla, la puntuación dependerá de si logras completar el nivel y cuantos asteroides destruyas
 
 # Instalación y Ejecución
