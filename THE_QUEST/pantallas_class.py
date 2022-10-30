@@ -167,7 +167,7 @@ class Partidas():
                 pass
             #Puntaje extra por completar el nivel
             elif self.seconds%49==0:
-                self.score+=100
+                self.score+=20
              #imprimir el planeta en pantalla
             if self.seconds >=self.final:#cuando termine el juego
                 self.pantalla.blit(self.planeta,(600+self.scroll_planeta,-56))
@@ -296,7 +296,7 @@ class Partidas():
                 pass
             #Puntaje extra por completar el nivel
             elif self.seconds%49==0:
-                self.score+=100
+                self.score+=20
              #imprimir el planeta en pantalla
             if self.seconds >=self.final:#cuando termine el juego
                 self.pantalla.blit(self.planeta2,(600+self.scroll_planeta,-56))
